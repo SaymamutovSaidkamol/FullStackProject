@@ -1,0 +1,175 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String   @id @default(uuid())
+  fullName String
+  phone    String
+  password String
+  isActive Boolean
+  balance  Int
+  role     RoleUser
+
+  partners Partners[]
+  Salary   Salary[]
+  Payment  Payment[]
+  Product  Product[]
+  Buy      Buy[]
+  Contract Contract[]
+}
+
+enum RoleUser {
+  ADMIN
+  OWNER
+}
+
+model Partners {
+  id       String       @id @default(uuid())
+  fullName String
+  phone    String
+  password String
+  isActive Boolean
+  balance  Int
+  role     RolePartners
+  adress   String
+  userId   String
+
+  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Payment  Payment[]
+  Buy      Buy[]
+  Contract Contract[]
+}
+
+enum RolePartners {
+  SELLER
+  CURTOMER
+}
+
+model Salary {
+  id      String @id @default(ulid())
+  userId  String
+  amount  Int
+  comment String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Payment {
+  id          String      @id @default(uuid())
+  partnerId   String
+  debtId      String
+  userId      String
+  amount      Int
+  comment     String
+  paymentType PaymentType
+  type        type
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  partner Partners @relation(fields: [partnerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  debt    Debt     @relation(fields: [debtId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+enum PaymentType {
+  CASH
+  CARD
+}
+
+enum type {
+  IN
+  OUT
+}
+
+model Product {
+  id         String    @id @default(ulid())
+  userId     String
+  title      String
+  sellPrice  Int
+  buyPrice   Int
+  quantity   Int
+  categoryId String
+  units      unitsType
+  comment    String
+  isActive   Boolean
+
+  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  category Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Buy      Buy[]
+  Contract Contract[]
+}
+
+enum unitsType {
+  KG
+  DONA
+  LITR
+  M2
+}
+
+model Category {
+  id       String    @id @default(uuid())
+  title    String
+  time     Int
+  isActive Boolean
+  Product  Product[]
+  Debt     Debt[]
+}
+
+model Buy {
+  id        String @id @default(uuid())
+  userId    String
+  partnerId String
+  productId String
+  quantity  Int
+  buyPrice  Int
+  comment   String
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  partner Partners @relation(fields: [partnerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  product Product  @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Contract {
+  id        String @id @default(ulid())
+  userId    String
+  partnerId String
+  productId String
+  quantity  Int
+  sellPrice Int
+  buyPrice  Int
+  time      Int
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  partner Partners @relation(fields: [partnerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  product Product  @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Return  Return[]
+}
+
+model Debt {
+  id         String    @id @default(uuid())
+  contractId String
+  total      Int
+  time       Int
+  Payment    Payment[]
+
+  category Category @relation(fields: [contractId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Return {
+  id         String  @id @default(uuid())
+  contractId String
+  isNew      Boolean
+  reason     String
+
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
