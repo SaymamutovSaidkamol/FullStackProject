@@ -19,9 +19,10 @@ CREATE TABLE "User" (
     "fullName" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "isActive" BOOLEAN NOT NULL,
+    "isActive" BOOLEAN NOT NULL DEFAULT false,
     "balance" INTEGER NOT NULL,
-    "role" "RoleUser" NOT NULL,
+    "email" TEXT NOT NULL,
+    "role" "RoleUser" NOT NULL DEFAULT 'ADMIN',
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -32,7 +33,7 @@ CREATE TABLE "Partners" (
     "fullName" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "isActive" BOOLEAN NOT NULL,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
     "balance" INTEGER NOT NULL,
     "role" "RolePartners" NOT NULL,
     "adress" TEXT NOT NULL,
@@ -59,7 +60,7 @@ CREATE TABLE "Payment" (
     "userId" TEXT NOT NULL,
     "amount" INTEGER NOT NULL,
     "comment" TEXT NOT NULL,
-    "paymentType" "PaymentType" NOT NULL,
+    "paymentType" "PaymentType" NOT NULL DEFAULT 'CASH',
     "type" "type" NOT NULL,
 
     CONSTRAINT "Payment_pkey" PRIMARY KEY ("id")
@@ -138,6 +139,9 @@ CREATE TABLE "Return" (
     CONSTRAINT "Return_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
 -- AddForeignKey
 ALTER TABLE "Partners" ADD CONSTRAINT "Partners_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -178,7 +182,7 @@ ALTER TABLE "Contract" ADD CONSTRAINT "Contract_partnerId_fkey" FOREIGN KEY ("pa
 ALTER TABLE "Contract" ADD CONSTRAINT "Contract_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Debt" ADD CONSTRAINT "Debt_contractId_fkey" FOREIGN KEY ("contractId") REFERENCES "Category"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Debt" ADD CONSTRAINT "Debt_contractId_fkey" FOREIGN KEY ("contractId") REFERENCES "Contract"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Return" ADD CONSTRAINT "Return_contractId_fkey" FOREIGN KEY ("contractId") REFERENCES "Contract"("id") ON DELETE CASCADE ON UPDATE CASCADE;

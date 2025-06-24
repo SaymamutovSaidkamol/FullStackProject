@@ -4,6 +4,7 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
 } from 'class-validator';
 import { RoleUser } from 'src/enums/enums';
@@ -28,7 +29,7 @@ export class CreateUserDto {
   phone: string;
 
   @ApiProperty({
-    example: 'password_123!',
+    example: 'Password_123!',
     description: 'Foydalanuvchining paroli',
     required: true,
   })
@@ -37,7 +38,7 @@ export class CreateUserDto {
   password: string;
 
   @IsBoolean()
-  @IsNotEmpty()
+  @IsOptional()
   isActive: boolean;
 
   @ApiProperty({
@@ -57,4 +58,58 @@ export class CreateUserDto {
   @IsEnum(RoleUser)
   @IsNotEmpty()
   role: RoleUser;
+
+  @ApiProperty({
+    example: 'example@gmail.com',
+    description: 'Foydalanuvchining Email',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  email: string;
+}
+
+
+export class LoginUserDto {
+  @ApiProperty({
+    example: 'example@gmail.com',
+    description: 'Foydalanuvchining telefon raqami',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  email: string;
+
+  @ApiProperty({
+    example: 'Password_123!',
+    description: 'Foydalanuvchining paroli',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
+
+export function isValidUzbekPhoneNumber(phoneNumber: string): boolean {
+  const cleaned = phoneNumber.replace(/[\s\-]/g, '');
+
+  const regex = /^\+998(33|88|9[0-5|7-9])\d{7}$/;
+
+  return regex.test(cleaned);
+}
+
+export function StrongPassword(password: string): boolean {
+  const minLength = /.{6,}/;
+  const hasUpperCase = /[A-Z]/;
+  const hasLowerCase = /[a-z]/;
+  const hasDigit = /[0-9]/;
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;
+
+  return (
+    minLength.test(password) &&
+    hasUpperCase.test(password) &&
+    hasLowerCase.test(password) &&
+    hasDigit.test(password) &&
+    hasSpecialChar.test(password)
+  );
 }

@@ -18,9 +18,10 @@ model User {
   fullName String
   phone    String
   password String
-  isActive Boolean
+  isActive Boolean  @default(false)
   balance  Int
-  role     RoleUser
+  email    String   @unique
+  role     RoleUser @default(ADMIN)
 
   partners Partners[]
   Salary   Salary[]
@@ -38,9 +39,9 @@ enum RoleUser {
 model Partners {
   id       String       @id @default(uuid())
   fullName String
-  phone    String
+  phone    String       @unique
   password String
-  isActive Boolean
+  isActive Boolean      @default(true)
   balance  Int
   role     RolePartners
   adress   String
@@ -73,7 +74,7 @@ model Payment {
   userId      String
   amount      Int
   comment     String
-  paymentType PaymentType
+  paymentType PaymentType @default(CASH)
   type        type
 
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -122,7 +123,6 @@ model Category {
   time     Int
   isActive Boolean
   Product  Product[]
-  Debt     Debt[]
 }
 
 model Buy {
@@ -153,6 +153,7 @@ model Contract {
   partner Partners @relation(fields: [partnerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   product Product  @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   Return  Return[]
+  Debt    Debt[]
 }
 
 model Debt {
@@ -162,7 +163,7 @@ model Debt {
   time       Int
   Payment    Payment[]
 
-  category Category @relation(fields: [contractId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Return {
