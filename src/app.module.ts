@@ -7,9 +7,11 @@ import { CategoryModule } from './category/category.module';
 import { PartnersModule } from './partners/partners.module';
 import { SalaryModule } from './salary/salary.module';
 import { ProductModule } from './product/product.module';
+import { ContractModule } from './contract/contract.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
-  imports: [UserModule, PrismaModule, CategoryModule, PartnersModule, SalaryModule, ProductModule],
+  imports: [UserModule, PrismaModule, CategoryModule, PartnersModule, SalaryModule, ProductModule, ContractModule, PaymentModule],
   controllers: [AppController],
   providers: [AppService],
 })
