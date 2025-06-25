@@ -9,9 +9,11 @@ import { SalaryModule } from './salary/salary.module';
 import { ProductModule } from './product/product.module';
 import { ContractModule } from './contract/contract.module';
 import { PaymentModule } from './payment/payment.module';
+import { ReturnModule } from './return/return.module';
+import { BuyModule } from './buy/buy.module';
 
 @Module({
-  imports: [UserModule, PrismaModule, CategoryModule, PartnersModule, SalaryModule, ProductModule, ContractModule, PaymentModule],
+  imports: [UserModule, PrismaModule, CategoryModule, PartnersModule, SalaryModule, ProductModule, ContractModule, PaymentModule, ReturnModule, BuyModule],
   controllers: [AppController],
   providers: [AppService],
 })
