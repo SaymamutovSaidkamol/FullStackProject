@@ -19,16 +19,16 @@ export class BuyController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.buyService.findOne(+id);
+    return this.buyService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateBuyDto: UpdateBuyDto) {
-    return this.buyService.update(+id, updateBuyDto);
+    return this.buyService.update(id, updateBuyDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.buyService.remove(+id);
+    return this.buyService.remove(id);
   }
 }

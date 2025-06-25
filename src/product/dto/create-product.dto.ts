@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsEnum, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { unitsType } from 'src/enums/enums';
 
 export class CreateProductDto {
@@ -65,4 +65,12 @@ export class CreateProductDto {
   })
   @IsBoolean()
   isActive: boolean;
+
+  @ApiProperty({
+    example: 'example.jpg',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  image: string;
 }

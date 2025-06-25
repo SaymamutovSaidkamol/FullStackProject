@@ -23,6 +23,7 @@ CREATE TABLE "User" (
     "balance" INTEGER NOT NULL,
     "email" TEXT NOT NULL,
     "role" "RoleUser" NOT NULL DEFAULT 'ADMIN',
+    "image" TEXT NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -32,12 +33,12 @@ CREATE TABLE "Partners" (
     "id" TEXT NOT NULL,
     "fullName" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "balance" INTEGER NOT NULL,
     "role" "RolePartners" NOT NULL,
     "adress" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
+    "image" TEXT NOT NULL,
 
     CONSTRAINT "Partners_pkey" PRIMARY KEY ("id")
 );
@@ -78,6 +79,7 @@ CREATE TABLE "Product" (
     "units" "unitsType" NOT NULL,
     "comment" TEXT NOT NULL,
     "isActive" BOOLEAN NOT NULL,
+    "image" TEXT NOT NULL,
 
     CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
 );
@@ -88,6 +90,7 @@ CREATE TABLE "Category" (
     "title" TEXT NOT NULL,
     "time" INTEGER NOT NULL,
     "isActive" BOOLEAN NOT NULL,
+    "image" TEXT NOT NULL,
 
     CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
 );
@@ -141,6 +144,9 @@ CREATE TABLE "Return" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Partners_phone_key" ON "Partners"("phone");
 
 -- AddForeignKey
 ALTER TABLE "Partners" ADD CONSTRAINT "Partners_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

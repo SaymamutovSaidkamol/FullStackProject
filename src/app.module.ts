@@ -11,10 +11,13 @@ import { ContractModule } from './contract/contract.module';
 import { PaymentModule } from './payment/payment.module';
 import { ReturnModule } from './return/return.module';
 import { BuyModule } from './buy/buy.module';
+import { MailService } from './mail/mail.service';
+import { MailModule } from './mail/mail.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
-  imports: [UserModule, PrismaModule, CategoryModule, PartnersModule, SalaryModule, ProductModule, ContractModule, PaymentModule, ReturnModule, BuyModule],
+  imports: [UserModule, PrismaModule, CategoryModule, PartnersModule, SalaryModule, ProductModule, ContractModule, PaymentModule, ReturnModule, BuyModule, MailModule, UploadModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, MailService],
 })
 export class AppModule {}
