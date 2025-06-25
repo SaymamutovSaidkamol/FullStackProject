@@ -22,6 +22,7 @@ model User {
   balance  Int
   email    String   @unique
   role     RoleUser @default(ADMIN)
+  image    String
 
   partners Partners[]
   Salary   Salary[]
@@ -40,12 +41,12 @@ model Partners {
   id       String       @id @default(uuid())
   fullName String
   phone    String       @unique
-  password String
   isActive Boolean      @default(true)
   balance  Int
   role     RolePartners
   adress   String
   userId   String
+  image    String
 
   user     User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   Payment  Payment[]
@@ -103,6 +104,7 @@ model Product {
   units      unitsType
   comment    String
   isActive   Boolean
+  image      String
 
   user     User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   category Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -122,6 +124,7 @@ model Category {
   title    String
   time     Int
   isActive Boolean
+  image    String
   Product  Product[]
 }
 

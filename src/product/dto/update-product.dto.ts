@@ -1,6 +1,6 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { CreateProductDto } from './create-product.dto';
-import { IsBoolean, IsEnum, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { unitsType } from 'src/enums/enums';
 
 export class UpdateProductDto {
@@ -66,4 +66,8 @@ export class UpdateProductDto {
   })
   @IsBoolean()
   isActive?: boolean;
+
+  @IsString()
+  @IsNotEmpty()
+  image?: string;
 }

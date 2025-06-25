@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsEnum, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { RolePartners } from 'src/enums/enums';
 
 export class CreatePartnerDto {
@@ -41,7 +41,7 @@ export class CreatePartnerDto {
   @ApiProperty({
     example: RolePartners.CURTOMER,
     required: true,
-    enum: RolePartners
+    enum: RolePartners,
   })
   @IsEnum(RolePartners)
   role: RolePartners;
@@ -53,11 +53,18 @@ export class CreatePartnerDto {
   @IsString()
   adress: string;
 
-
   @ApiProperty({
     example: 'uuid',
     required: true,
   })
   @IsString()
   userId: string;
+
+  @ApiProperty({
+    example: 'example.jpg',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  image: string;
 }

@@ -67,8 +67,15 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   email: string;
-}
 
+  @ApiProperty({
+    example: 'example.jpg',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  image: string;
+}
 
 export class LoginUserDto {
   @ApiProperty({
@@ -88,6 +95,66 @@ export class LoginUserDto {
   @IsString()
   @IsNotEmpty()
   password: string;
+}
+
+export class SendOtpUserDto {
+  @ApiProperty({
+    example: 'example@gmail.com',
+    description: 'Foydalanuvchining telefon raqami',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  email: string;
+}
+
+export class VerifyUserDto {
+  @ApiProperty({
+    example: 'example@gmail.com',
+    description: 'Foydalanuvchining telefon raqami',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  email: string;
+
+  @ApiProperty({
+    example: '23456',
+    description: 'Yuborilgan code ni kriting',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  otp: string;
+}
+
+export class VerifyResetPasswordUserDto {
+  @ApiProperty({
+    example: 'example@gmail.com',
+    description: 'Foydalanuvchining telefon raqami',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  email: string;
+
+  @ApiProperty({
+    example: 'Password_123!',
+    description: 'Yangi parolni kriting',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  new_password: string;
+
+  @ApiProperty({
+    example: '23456',
+    description: 'Yuborilgan code ni kriting',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  otp: string;
 }
 
 export function isValidUzbekPhoneNumber(phoneNumber: string): boolean {

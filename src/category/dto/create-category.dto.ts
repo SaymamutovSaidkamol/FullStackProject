@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateCategoryDto {
   @ApiProperty({
@@ -24,4 +24,12 @@ export class CreateCategoryDto {
   })
   @IsBoolean()
   isActive: boolean;
+
+  @ApiProperty({
+    example: 'example.jpg',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  image: string;
 }
