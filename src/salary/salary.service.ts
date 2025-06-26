@@ -1,5 +1,7 @@
 import {
   BadGatewayException,
+  BadRequestException,
+  HttpException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -10,60 +12,88 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class SalaryService {
   constructor(private prisma: PrismaService) {}
-  async create(data: CreateSalaryDto) {
-    let checkUserId = await this.prisma.user.findFirst({
-      where: { id: data.userId },
-    });
 
-    if (!checkUserId) {
-      throw new NotFoundException('User not found');
+  private Error(error: any): never {
+    if (error instanceof HttpException) {
+      throw error;
     }
+    throw new BadRequestException(error.message);
+  }
 
-    let newCateg = await this.prisma.salary.create({ data });
+  async create(data: CreateSalaryDto) {
+    try {
+      let checkUserId = await this.prisma.user.findFirst({
+        where: { id: data.userId },
+      });
 
-    return { data: newCateg };
+      if (!checkUserId) {
+        throw new NotFoundException('User not found');
+      }
+
+      let newCateg = await this.prisma.salary.create({ data });
+
+      return { data: newCateg };
+    } catch (error) {
+      this.Error(error);
+    }
   }
 
   async findAll() {
-    let allCateg = await this.prisma.salary.findMany();
+    try {
+      let allCateg = await this.prisma.salary.findMany();
 
-    return { data: allCateg };
+      return { data: allCateg };
+    } catch (error) {
+      this.Error(error);
+    }
   }
 
   async findOne(id: string) {
-    let checkCateg = await this.prisma.salary.findFirst({ where: { id } });
+    try {
+      let checkCateg = await this.prisma.salary.findFirst({ where: { id } });
 
-    if (!checkCateg) {
-      throw new NotFoundException('Salary not found');
+      if (!checkCateg) {
+        throw new NotFoundException('Salary not found');
+      }
+
+      return { data: checkCateg };
+    } catch (error) {
+      this.Error(error);
     }
-
-    return { data: checkCateg };
   }
 
   async update(id: string, data: UpdateSalaryDto) {
-    let checkCateg = await this.prisma.salary.findFirst({ where: { id } });
+    try {
+      let checkCateg = await this.prisma.salary.findFirst({ where: { id } });
 
-    if (!checkCateg) {
-      throw new NotFoundException('Salary not found');
+      if (!checkCateg) {
+        throw new NotFoundException('Salary not found');
+      }
+
+      let updateCateg = await this.prisma.salary.updateMany({
+        where: { id },
+        data,
+      });
+
+      return { data: updateCateg, message: 'Salary updated successfully' };
+    } catch (error) {
+      this.Error(error);
     }
-
-    let updateCateg = await this.prisma.salary.updateMany({
-      where: { id },
-      data,
-    });
-
-    return { data: updateCateg, message: 'Salary updated successfully' };
   }
 
   async remove(id: string) {
-    let checkCateg = await this.prisma.salary.findFirst({ where: { id } });
+    try {
+      let checkCateg = await this.prisma.salary.findFirst({ where: { id } });
 
-    if (!checkCateg) {
-      throw new NotFoundException('Salary not found');
+      if (!checkCateg) {
+        throw new NotFoundException('Salary not found');
+      }
+
+      let delPartner = await this.prisma.salary.delete({ where: { id } });
+
+      return { data: delPartner, message: 'Salary deleted successfully' };
+    } catch (error) {
+      this.Error(error);
     }
-
-    let delPartner = await this.prisma.salary.delete({ where: { id } });
-
-    return { data: delPartner, message: 'Salary deleted successfully' };
   }
 }

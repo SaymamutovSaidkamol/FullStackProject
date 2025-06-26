@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+} from 'class-validator';
 import { RolePartners } from 'src/enums/enums';
 
 export class CreatePartnerDto {
@@ -16,13 +22,6 @@ export class CreatePartnerDto {
   })
   @IsString()
   phone: string;
-
-  @ApiProperty({
-    example: 'Password_1!',
-    required: true,
-  })
-  @IsString()
-  password: string;
 
   @ApiProperty({
     example: true,
@@ -45,6 +44,15 @@ export class CreatePartnerDto {
   })
   @IsEnum(RolePartners)
   role: RolePartners;
+
+  @ApiProperty({
+    example: 'uuid()',
+    description: 'Foydalanuvchining Roli',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  regionId: string;
 
   @ApiProperty({
     example: 'Toshkent',

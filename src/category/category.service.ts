@@ -36,15 +36,12 @@ export class CategoryService {
       limit = '10',
     } = query;
 
-    // 🔹 enum stringlarga aylantirildi
     const sortFieldStr = String(sortField);
     const sortOrderStr = String(sortOrder);
 
-    // 🔹 Ruxsat etilgan fieldlar
     const validSortFields = ['title', 'time', 'isActive'];
     const validSortOrders = ['asc', 'desc'];
 
-    // 🔹 Defaultga tushirish
     const finalSortField = validSortFields.includes(sortFieldStr)
       ? sortFieldStr
       : 'title';
@@ -53,17 +50,14 @@ export class CategoryService {
       ? sortOrderStr
       : 'asc';
 
-    // 🔹 Filter
     const where: any = {};
     if (isActive !== undefined) where.isActive = isActive === 'true';
     if (title) where.title = { contains: title, mode: 'insensitive' };
     if (time) where.time = +time;
 
-    // 🔹 Pagination
     const skip = (parseInt(page) - 1) * parseInt(limit);
     const take = parseInt(limit);
 
-    // 🔹 So‘rov
     const data = await this.prisma.category.findMany({
       where,
       skip,

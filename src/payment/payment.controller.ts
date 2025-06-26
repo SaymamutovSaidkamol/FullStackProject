@@ -1,7 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
+import { ApiResponse } from '@nestjs/swagger';
+import { QueryPaymentnDto } from './dto/payment-query.dt';
 
 @Controller('payment')
 export class PaymentController {
@@ -13,8 +24,10 @@ export class PaymentController {
   }
 
   @Get()
-  findAll() {
-    return this.paymentService.findAll();
+  @ApiResponse({ status: 200, description: 'Muvaffaqiyatli bajarildi' })
+  @ApiResponse({ status: 400, description: 'Noto‘g‘ri so‘rov' })
+  findAll(@Query() query: QueryPaymentnDto) {
+    return this.paymentService.findAll(query);
   }
 
   @Get(':id')

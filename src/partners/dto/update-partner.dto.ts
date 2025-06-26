@@ -24,13 +24,6 @@ export class UpdatePartnerDto {
   phone?: string;
 
   @ApiProperty({
-    example: 'Password_1!',
-    required: true,
-  })
-  @IsString()
-  password?: string;
-
-  @ApiProperty({
     example: true,
     required: true,
   })
@@ -51,6 +44,15 @@ export class UpdatePartnerDto {
   })
   @IsEnum(RolePartners)
   role?: RolePartners;
+
+  @ApiProperty({
+    example: 'uuid()',
+    description: 'Foydalanuvchining Roli',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  regionId?: string;
 
   @ApiProperty({
     example: 'Toshkent',
