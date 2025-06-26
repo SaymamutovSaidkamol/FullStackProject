@@ -29,7 +29,6 @@ export class UserService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
-    private mailer: MailService,
   ) {
     this.transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -172,13 +171,17 @@ export class UserService {
         where: { email: data.email },
       });
 
-      console.log(checkUser);
-
       if (!checkUser) {
         throw new NotFoundException('User not found');
       }
 
       let secret = 'secret-password' + data.email;
+
+      if (!StrongPassword(data.new_password)) {
+        throw new BadRequestException(
+          "Your password invalid. Example('Saidkamol1!')",
+        );
+      }
 
       let verifyOtp = totp.verify({ token: data.otp, secret });
 
@@ -200,71 +203,79 @@ export class UserService {
   }
 
   async create(data: CreateUserDto) {
-    const SearchUser = await this.prisma.user.findFirst({
-      where: { phone: data.phone },
-    });
+    try {
+      const SearchUser = await this.prisma.user.findFirst({
+        where: { phone: data.phone },
+      });
 
-    if (SearchUser) {
-      throw new BadRequestException('This user alredy exist');
+      if (SearchUser) {
+        throw new BadRequestException('This user alredy exist');
+      }
+
+      if (!isValidUzbekPhoneNumber(data.phone)) {
+        throw new BadRequestException(
+          'The phone number was entered incorrectly. example(+998941234567)',
+        );
+      }
+
+      if (!StrongPassword(data.password)) {
+        throw new BadRequestException(
+          "Your password invalid. Example('Saidkamol1!')",
+        );
+      }
+
+      if (data.balance < 0) {
+        throw new BadRequestException('Error balance has been deducted.');
+      }
+
+      let hashPassword = bcrypt.hashSync(data.password, 7);
+
+      data = { ...data, password: hashPassword };
+
+      let newUser = await this.prisma.user.create({ data });
+
+      return {
+        message: 'created successfully✅',
+        data: newUser,
+      };
+    } catch (error) {
+      this.Error(error);
     }
-
-    if (!isValidUzbekPhoneNumber(data.phone)) {
-      throw new BadRequestException(
-        'The phone number was entered incorrectly. example(+998941234567)',
-      );
-    }
-
-    if (!StrongPassword(data.password)) {
-      throw new BadRequestException(
-        "Your password invalid. Example('Saidkamol1!')",
-      );
-    }
-
-    if (data.balance < 0) {
-      throw new BadRequestException('Error balance has been deducted.');
-    }
-
-    let hashPassword = bcrypt.hashSync(data.password, 7);
-
-    data = { ...data, password: hashPassword };
-
-    let newUser = await this.prisma.user.create({ data });
-
-    return {
-      message: 'created successfully✅',
-      data: newUser,
-    };
   }
 
   async login(data: LoginUserDto) {
-    let checkUser = await this.prisma.user.findFirst({
-      where: { email: data.email },
-    });
+    try {
+      let checkUser = await this.prisma.user.findFirst({
+        where: { email: data.email },
+      });
 
-    if (!checkUser) {
-      throw new NotFoundException('User not found');
+      if (!checkUser) {
+        throw new NotFoundException('User not found');
+      }
+
+      let checkPassword = bcrypt.compareSync(data.password, checkUser.password);
+
+      if (!checkPassword) {
+        throw new BadRequestException('Wrong password');
+      }
+
+      if (checkUser.isActive == false) {
+        throw new BadRequestException('Please activate your account.');
+      }
+
+      let accesToken = this.genAccessToken({
+        userId: checkUser.id,
+        role: checkUser.role,
+      });
+      let refreshToken = this.genRefreshToken({
+        userId: checkUser.id,
+        role: checkUser.role,
+      });
+
+      return { acces_token: accesToken, refresh_token: refreshToken };
+    } catch (error) {
+      this.Error(error);
     }
-
-    let checkPassword = bcrypt.compareSync(data.password, checkUser.password);
-
-    if (!checkPassword) {
-      throw new BadRequestException('Wrong password');
-    }
-
-    if (checkUser.isActive == false) {
-      throw new BadRequestException('Please activate your account.');
-    }
-
-    let accesToken = this.genAccessToken({
-      userId: checkUser.id,
-      role: checkUser.role,
-    });
-    let refreshToken = this.genRefreshToken({
-      userId: checkUser.id,
-      role: checkUser.role,
-    });
-
-    return { acces_token: accesToken, refresh_token: refreshToken };
   }
 
   genRefreshToken(payload: object) {
@@ -282,44 +293,77 @@ export class UserService {
   }
 
   async findAll() {
-    let allUsers = await this.prisma.user.findMany();
+    try {
+      let allUsers = await this.prisma.user.findMany({
+        include: {
+          partners: true,
+          Product: true,
+          Salary: true,
+          Payment: true,
+          Contract: true,
+          Buy: true,
+        },
+      });
 
-    return { data: allUsers };
+      return { data: allUsers };
+    } catch (error) {
+      this.Error(error);
+    }
   }
 
   async findOne(id: string) {
-    let oneUser = await this.prisma.user.findFirst({ where: { id } });
+    try {
+      let oneUser = await this.prisma.user.findFirst({ where: { id } });
 
-    if (!oneUser) {
-      throw new NotFoundException('User not Found');
+      if (!oneUser) {
+        throw new NotFoundException('User not Found');
+      }
+
+      return { data: oneUser };
+    } catch (error) {
+      this.Error(error);
     }
-
-    return { data: oneUser };
   }
 
   async update(id: string, data: UpdateUserDto) {
-    let checkUser = await this.prisma.user.findFirst({ where: { id } });
+    try {
+      let checkUser = await this.prisma.user.findFirst({ where: { id } });
 
-    if (!checkUser) {
-      throw new NotFoundException('User not found');
+      if (!checkUser) {
+        throw new NotFoundException('User not found');
+      }
+
+      if (data.phone) {
+        if (!isValidUzbekPhoneNumber(data.phone)) {
+          throw new BadRequestException(
+            'The phone number was entered incorrectly. example(+998941234567)',
+          );
+        }
+      }
+
+      return {
+        message: 'User changet successfully✅',
+        data: await this.prisma.user.update({ where: { id }, data }),
+      };
+    } catch (error) {
+      this.Error(error);
     }
-
-    return {
-      message: 'User changet successfully✅',
-      data: await this.prisma.user.update({ where: { id }, data }),
-    };
   }
 
   async remove(id: string) {
-    let checkUser = await this.prisma.user.findFirst({ where: { id } });
+    try {
+      let checkUser = await this.prisma.user.findFirst({ where: { id } });
 
-    if (!checkUser) {
-      throw new NotFoundException('User not found');
+      if (!checkUser) {
+        throw new NotFoundException('User not found');
+      }
+
+      return {
+        message: 'User deleted successfully✅',
+        data: await this.prisma.user.delete({ where: { id } }),
+      };
+    } catch (error) {
+      this.Error(error);
     }
-
-    return {
-      message: 'User deleted successfully✅',
-      data: await this.prisma.user.delete({ where: { id } }),
-    };
   }
 }

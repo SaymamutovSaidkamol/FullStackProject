@@ -14,6 +14,16 @@ CREATE TYPE "type" AS ENUM ('IN', 'OUT');
 CREATE TYPE "unitsType" AS ENUM ('KG', 'DONA', 'LITR', 'M2');
 
 -- CreateTable
+CREATE TABLE "Region" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Region_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "fullName" TEXT NOT NULL,
@@ -21,9 +31,12 @@ CREATE TABLE "User" (
     "password" TEXT NOT NULL,
     "isActive" BOOLEAN NOT NULL DEFAULT false,
     "balance" INTEGER NOT NULL,
+    "regionId" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "role" "RoleUser" NOT NULL DEFAULT 'ADMIN',
     "image" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -36,9 +49,12 @@ CREATE TABLE "Partners" (
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "balance" INTEGER NOT NULL,
     "role" "RolePartners" NOT NULL,
+    "regionId" TEXT NOT NULL,
     "adress" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "image" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Partners_pkey" PRIMARY KEY ("id")
 );
@@ -49,6 +65,8 @@ CREATE TABLE "Salary" (
     "userId" TEXT NOT NULL,
     "amount" INTEGER NOT NULL,
     "comment" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Salary_pkey" PRIMARY KEY ("id")
 );
@@ -63,6 +81,8 @@ CREATE TABLE "Payment" (
     "comment" TEXT NOT NULL,
     "paymentType" "PaymentType" NOT NULL DEFAULT 'CASH',
     "type" "type" NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Payment_pkey" PRIMARY KEY ("id")
 );
@@ -80,6 +100,8 @@ CREATE TABLE "Product" (
     "comment" TEXT NOT NULL,
     "isActive" BOOLEAN NOT NULL,
     "image" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
 );
@@ -91,6 +113,8 @@ CREATE TABLE "Category" (
     "time" INTEGER NOT NULL,
     "isActive" BOOLEAN NOT NULL,
     "image" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
 );
@@ -104,6 +128,8 @@ CREATE TABLE "Buy" (
     "quantity" INTEGER NOT NULL,
     "buyPrice" INTEGER NOT NULL,
     "comment" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Buy_pkey" PRIMARY KEY ("id")
 );
@@ -118,6 +144,8 @@ CREATE TABLE "Contract" (
     "sellPrice" INTEGER NOT NULL,
     "buyPrice" INTEGER NOT NULL,
     "time" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Contract_pkey" PRIMARY KEY ("id")
 );
@@ -128,6 +156,8 @@ CREATE TABLE "Debt" (
     "contractId" TEXT NOT NULL,
     "total" INTEGER NOT NULL,
     "time" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Debt_pkey" PRIMARY KEY ("id")
 );
@@ -138,6 +168,8 @@ CREATE TABLE "Return" (
     "contractId" TEXT NOT NULL,
     "isNew" BOOLEAN NOT NULL,
     "reason" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Return_pkey" PRIMARY KEY ("id")
 );
@@ -149,7 +181,13 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "Partners_phone_key" ON "Partners"("phone");
 
 -- AddForeignKey
+ALTER TABLE "User" ADD CONSTRAINT "User_regionId_fkey" FOREIGN KEY ("regionId") REFERENCES "Region"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Partners" ADD CONSTRAINT "Partners_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Partners" ADD CONSTRAINT "Partners_regionId_fkey" FOREIGN KEY ("regionId") REFERENCES "Region"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Salary" ADD CONSTRAINT "Salary_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

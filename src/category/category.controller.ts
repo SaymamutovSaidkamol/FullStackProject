@@ -23,8 +23,8 @@ import { GetCategoryQueryDto } from './dto/GetCategoryQuery.dto';
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  // @Roles(RoleUser.OWNER)
-  // @UseGuards(AuthGuard, RoleGuard)
+  @Roles(RoleUser.OWNER)
+  @UseGuards(AuthGuard, RoleGuard)
   @ApiOperation({
     summary: 'Faqat OWNER category qo`sha oladi',
     description:
@@ -35,7 +35,7 @@ export class CategoryController {
     return this.categoryService.create(createCategoryDto);
   }
 
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   @ApiOperation({
     summary: 'Categorylarni hamma ko`rishi mumkun, filter, sort va paganation ',
     description:

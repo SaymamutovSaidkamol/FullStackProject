@@ -4,7 +4,7 @@ import { unitsType } from 'src/enums/enums';
 
 export class CreateProductDto {
   @ApiProperty({
-    example: 'Saidkamol',
+    example: 'uuid',
     required: true,
   })
   @IsString()

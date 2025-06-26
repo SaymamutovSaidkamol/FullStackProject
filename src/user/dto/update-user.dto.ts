@@ -49,6 +49,15 @@ export class UpdateUserDto {
   @IsNotEmpty()
   role?: RoleUser;
 
+  @ApiProperty({
+    example: 'uuid()',
+    description: 'Foydalanuvchining Roli',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  regionId?: string;
+
   @IsString()
   @IsNotEmpty()
   email?: string;

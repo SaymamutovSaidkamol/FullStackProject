@@ -14,9 +14,11 @@ import { BuyModule } from './buy/buy.module';
 import { MailService } from './mail/mail.service';
 import { MailModule } from './mail/mail.module';
 import { UploadModule } from './upload/upload.module';
+import { DebtModule } from './debt/debt.module';
+import { RegionModule } from './region/region.module';
 
 @Module({
-  imports: [UserModule, PrismaModule, CategoryModule, PartnersModule, SalaryModule, ProductModule, ContractModule, PaymentModule, ReturnModule, BuyModule, MailModule, UploadModule],
+  imports: [UserModule, PrismaModule, CategoryModule, PartnersModule, SalaryModule, ProductModule, ContractModule, PaymentModule, ReturnModule, BuyModule, MailModule, UploadModule, DebtModule, RegionModule],
   controllers: [AppController],
   providers: [AppService, MailService],
 })

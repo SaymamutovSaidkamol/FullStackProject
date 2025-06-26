@@ -13,16 +13,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Region {
+  id        String     @id @default(uuid())
+  name      String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  User      User[]
+  Partners  Partners[]
+}
+
 model User {
-  id       String   @id @default(uuid())
-  fullName String
-  phone    String
-  password String
-  isActive Boolean  @default(false)
-  balance  Int
-  email    String   @unique
-  role     RoleUser @default(ADMIN)
-  image    String
+  id        String   @id @default(uuid())
+  fullName  String
+  phone     String
+  password  String
+  isActive  Boolean  @default(false)
+  balance   Int
+  regionId  String
+  email     String   @unique
+  role      RoleUser @default(ADMIN)
+  image     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   partners Partners[]
   Salary   Salary[]
@@ -30,6 +42,8 @@ model User {
   Product  Product[]
   Buy      Buy[]
   Contract Contract[]
+
+  region Region @relation(fields: [regionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 enum RoleUser {
@@ -38,17 +52,21 @@ enum RoleUser {
 }
 
 model Partners {
-  id       String       @id @default(uuid())
-  fullName String
-  phone    String       @unique
-  isActive Boolean      @default(true)
-  balance  Int
-  role     RolePartners
-  adress   String
-  userId   String
-  image    String
+  id        String       @id @default(uuid())
+  fullName  String
+  phone     String       @unique
+  isActive  Boolean      @default(true)
+  balance   Int
+  role      RolePartners
+  regionId  String
+  adress    String
+  userId    String
+  image     String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 
   user     User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  region   Region     @relation(fields: [regionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   Payment  Payment[]
   Buy      Buy[]
   Contract Contract[]
@@ -60,10 +78,12 @@ enum RolePartners {
 }
 
 model Salary {
-  id      String @id @default(ulid())
-  userId  String
-  amount  Int
-  comment String
+  id        String   @id @default(ulid())
+  userId    String
+  amount    Int
+  comment   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
@@ -77,6 +97,8 @@ model Payment {
   comment     String
   paymentType PaymentType @default(CASH)
   type        type
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   partner Partners @relation(fields: [partnerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -105,6 +127,8 @@ model Product {
   comment    String
   isActive   Boolean
   image      String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
   user     User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   category Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -120,22 +144,26 @@ enum unitsType {
 }
 
 model Category {
-  id       String    @id @default(uuid())
-  title    String
-  time     Int
-  isActive Boolean
-  image    String
-  Product  Product[]
+  id        String    @id @default(uuid())
+  title     String
+  time      Int
+  isActive  Boolean
+  image     String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Product   Product[]
 }
 
 model Buy {
-  id        String @id @default(uuid())
+  id        String   @id @default(uuid())
   userId    String
   partnerId String
   productId String
   quantity  Int
   buyPrice  Int
   comment   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   partner Partners @relation(fields: [partnerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -143,7 +171,7 @@ model Buy {
 }
 
 model Contract {
-  id        String @id @default(ulid())
+  id        String   @id @default(ulid())
   userId    String
   partnerId String
   productId String
@@ -151,6 +179,8 @@ model Contract {
   sellPrice Int
   buyPrice  Int
   time      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   partner Partners @relation(fields: [partnerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -164,16 +194,20 @@ model Debt {
   contractId String
   total      Int
   time       Int
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
   Payment    Payment[]
 
   contract Contract @relation(fields: [contractId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Return {
-  id         String  @id @default(uuid())
+  id         String   @id @default(uuid())
   contractId String
   isNew      Boolean
   reason     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   contract Contract @relation(fields: [contractId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }

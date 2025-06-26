@@ -42,13 +42,22 @@ export class CreateUserDto {
   isActive: boolean;
 
   @ApiProperty({
-    example: '12000',
+    example: 12000,
     description: 'Foydalanuvchining balanchi',
     required: true,
   })
   @IsNumber()
   @IsNotEmpty()
   balance: number;
+
+  @ApiProperty({
+    example: 'uuid()',
+    description: 'Foydalanuvchining balanchi',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  regionId: string;
 
   @ApiProperty({
     example: RoleUser.ADMIN,

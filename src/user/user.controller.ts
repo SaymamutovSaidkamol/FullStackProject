@@ -38,7 +38,7 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Post('login')
   @ApiOperation({
     summary: 'Userlarni login qiladi',
@@ -48,7 +48,7 @@ export class UserController {
     return this.userService.login(LoginUserDto);
   }
 
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Post('sene-otp')
   @ApiOperation({
     summary: 'Foydalanuvchilar acountini active qlish uchun code junatadi',
@@ -59,7 +59,7 @@ export class UserController {
     return this.userService.sendOtp(SendOtpUserDto);
   }
 
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Post('verify')
   @ApiOperation({
     summary: 'Foydalanuvchilar yuborilgan code olib acountini active qlishadi',
@@ -70,7 +70,7 @@ export class UserController {
     return this.userService.verify(VerifyUserDto);
   }
 
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Post('reset-password-otp')
   @ApiOperation({
     summary:
@@ -82,7 +82,7 @@ export class UserController {
     return this.userService.resetPasswordOtp(SendOtpUserDto);
   }
 
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Post('reset-password-verify')
   @ApiOperation({
     summary:
