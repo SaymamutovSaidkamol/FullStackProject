@@ -19,17 +19,13 @@ export class UpdateUserDto {
   @IsNotEmpty()
   fullName?: string;
 
+  @ApiProperty({
+    example: '+998941234567',
+    description: 'Foydalanuvchining telefon raqami',
+    required: true,
+  })
   @IsString()
-  @IsNotEmpty()
   phone?: string;
-
-  @IsString()
-  @IsNotEmpty()
-  password?: string;
-
-  @IsBoolean()
-  @IsOptional()
-  isActive?: boolean;
 
   @ApiProperty({
     example: '12000',
@@ -41,15 +37,6 @@ export class UpdateUserDto {
   balance?: number;
 
   @ApiProperty({
-    example: RoleUser.ADMIN,
-    description: 'Foydalanuvchining Roli',
-    required: true,
-  })
-  @IsEnum(RoleUser)
-  @IsNotEmpty()
-  role?: RoleUser;
-
-  @ApiProperty({
     example: 'uuid()',
     description: 'Foydalanuvchining Roli',
     required: true,
@@ -57,12 +44,15 @@ export class UpdateUserDto {
   @IsString()
   @IsNotEmpty()
   regionId?: string;
+}
 
-  @IsString()
+export class UpdateUserForAdminDto {
+  @ApiProperty({
+    example: RoleUser.ADMIN,
+    description: 'Foydalanuvchining Roli',
+    required: true,
+  })
+  @IsEnum(RoleUser)
   @IsNotEmpty()
-  email?: string;
-
-  @IsString()
-  @IsNotEmpty()
-  image?: string;
+  role?: RoleUser;
 }

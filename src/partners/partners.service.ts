@@ -8,23 +8,26 @@ import { CreatePartnerDto } from './dto/create-partner.dto';
 import { UpdatePartnerDto } from './dto/update-partner.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { isValidUzbekPhoneNumber } from 'src/user/dto/create-user.dto';
+import { Request } from 'express';
 
 @Injectable()
 export class PartnersService {
   constructor(private prisma: PrismaService) {}
-  async create(data: CreatePartnerDto) {
-    let checkCateg = await this.prisma.partners.findFirst({
-      where: { phone: data.phone },
-    });
 
-    if (checkCateg) {
-      throw new BadGatewayException('Category alredy exist');
-    }
+  async create(data: CreatePartnerDto, req: Request) {
+    data.userId = req['user'].userId;
 
     if (isValidUzbekPhoneNumber(data.phone)) {
       throw new BadRequestException(
         'The phone number was entered incorrectly. example(+998941234567)',
       );
+    }
+    let checkUser = await this.prisma.user.findFirst({
+      where: { phone: data.phone },
+    });
+
+    if (checkUser) {
+      throw new BadRequestException('User alredy exist');
     }
 
     let checkUserId = await this.prisma.user.findFirst({
@@ -79,9 +82,21 @@ export class PartnersService {
       throw new BadGatewayException('Partners alredy exist');
     }
 
+    let checkRegion = await this.prisma.region.findFirst({
+      where: { id: data.regionId },
+    });
+
+    if (!checkRegion) {
+      throw new NotFoundException('Region Not Found');
+    }
+
+    if (!data.isActive) {
+      throw new BadRequestException("Partner already is not active")
+    }
+
     let updateCateg = await this.prisma.partners.updateMany({
       where: { id },
-      data,
+      data
     });
 
     return { data: updateCateg, message: 'Partners updated successfully' };

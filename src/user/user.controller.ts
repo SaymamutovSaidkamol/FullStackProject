@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
+  Req,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import {
@@ -16,12 +18,14 @@ import {
   VerifyResetPasswordUserDto,
   VerifyUserDto,
 } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto, UpdateUserForAdminDto } from './dto/update-user.dto';
 import { ApiOperation } from '@nestjs/swagger';
 import { Roles } from 'src/decorators/role.decorators';
 import { AuthGuard } from 'src/guard/auth.guard';
 import { RoleGuard } from 'src/guard/role.guard';
 import { RoleUser } from 'src/enums/enums';
+import { Request } from 'express';
+import { QueryUserDto } from './dto/user-query.dto';
 
 @Controller('user')
 export class UserController {
@@ -38,7 +42,6 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  // @UseGuards(AuthGuard)
   @Post('login')
   @ApiOperation({
     summary: 'Userlarni login qiladi',
@@ -48,7 +51,6 @@ export class UserController {
     return this.userService.login(LoginUserDto);
   }
 
-  // @UseGuards(AuthGuard)
   @Post('sene-otp')
   @ApiOperation({
     summary: 'Foydalanuvchilar acountini active qlish uchun code junatadi',
@@ -59,7 +61,6 @@ export class UserController {
     return this.userService.sendOtp(SendOtpUserDto);
   }
 
-  // @UseGuards(AuthGuard)
   @Post('verify')
   @ApiOperation({
     summary: 'Foydalanuvchilar yuborilgan code olib acountini active qlishadi',
@@ -70,7 +71,6 @@ export class UserController {
     return this.userService.verify(VerifyUserDto);
   }
 
-  // @UseGuards(AuthGuard)
   @Post('reset-password-otp')
   @ApiOperation({
     summary:
@@ -82,7 +82,6 @@ export class UserController {
     return this.userService.resetPasswordOtp(SendOtpUserDto);
   }
 
-  // @UseGuards(AuthGuard)
   @Post('reset-password-verify')
   @ApiOperation({
     summary:
@@ -96,16 +95,16 @@ export class UserController {
     return this.userService.resetPasswordVerify(VerifyResetPasswordUserDto);
   }
 
-  @Roles(RoleUser.OWNER, RoleUser.ADMIN)
-  @UseGuards(AuthGuard, RoleGuard)
+  // @Roles(RoleUser.OWNER, RoleUser.ADMIN)
+  // @UseGuards(AuthGuard, RoleGuard)
   @Get()
   @ApiOperation({
     summary: 'Faqat OWNER ko`ra oladi barcha Userlarni',
     description:
       'Berilgan parametrlar bo‘yicha Faqat OWNER ko`ra oladi barcha Userlarni',
   })
-  findAll() {
-    return this.userService.findAll();
+  findAll(@Query() query: QueryUserDto) {
+    return this.userService.findAll(query);
   }
 
   @Roles(RoleUser.ADMIN, RoleUser.OWNER)
@@ -120,6 +119,21 @@ export class UserController {
     return this.userService.findOne(id);
   }
 
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: 'Faqat User o`zini Id si orqalik update qila oladi',
+    description:
+      'Berilgan parametrlar bo‘yicha Faqat User o`zini Id si orqalik update qila oladi',
+  })
+  @Patch('for-user/:id')
+  updateUser(
+    @Param('id') id: string,
+    @Body() UpdateUserDto: UpdateUserDto,
+    @Req() req: Request
+  ) {
+    return this.userService.updateUser(id, UpdateUserDto, req);
+  }
+
   @Roles(RoleUser.OWNER)
   @UseGuards(AuthGuard, RoleGuard)
   @ApiOperation({
@@ -127,20 +141,23 @@ export class UserController {
     description:
       'Berilgan parametrlar bo‘yicha Faqat OWNER Userlarni Id si orqalik update qila oladi',
   })
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(id, updateUserDto);
+  @Patch('for-owner/:id')
+  update(
+    @Param('id') id: string,
+    @Body() UpdateUserForAdminDto: UpdateUserForAdminDto,
+  ) {
+    return this.userService.update(id, UpdateUserForAdminDto);
   }
 
-  @Roles(RoleUser.OWNER)
-  @UseGuards(AuthGuard, RoleGuard)
+  @UseGuards(AuthGuard)
   @ApiOperation({
-    summary: 'Faqat OWNER Userlarni Id si orqalik o`chira oladi',
+    summary:
+      'Faqat OWNER yoki Userni o`zi acoutini Id si orqalik o`chira oladi',
     description:
       'Berilgan parametrlar bo‘yicha Faqat OWNER Userlarni Id si orqalik o`chira oladi',
   })
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(id);
+  @Delete('logout/:id')
+  remove(@Param('id') id: string, @Req() req: Request) {
+    return this.userService.remove(id, req);
   }
 }
