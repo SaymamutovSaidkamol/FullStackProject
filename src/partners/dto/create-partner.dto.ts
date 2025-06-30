@@ -5,6 +5,8 @@ import {
   IsNotEmpty,
   IsNumber,
   IsString,
+  IsUUID,
+  Min,
 } from 'class-validator';
 import { RolePartners } from 'src/enums/enums';
 
@@ -35,6 +37,7 @@ export class CreatePartnerDto {
     required: true,
   })
   @IsNumber()
+  @Min(0)
   balance: number;
 
   @ApiProperty({
@@ -52,6 +55,7 @@ export class CreatePartnerDto {
   })
   @IsString()
   @IsNotEmpty()
+  @IsUUID()
   regionId: string;
 
   @ApiProperty({
@@ -61,10 +65,7 @@ export class CreatePartnerDto {
   @IsString()
   adress: string;
 
-  @ApiProperty({
-    example: 'uuid',
-    required: true,
-  })
+  @IsUUID()
   @IsString()
   userId: string;
 

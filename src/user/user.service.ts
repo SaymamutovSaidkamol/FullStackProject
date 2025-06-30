@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   HttpException,
   Injectable,
   InternalServerErrorException,
@@ -14,13 +15,15 @@ import {
   VerifyResetPasswordUserDto,
   VerifyUserDto,
 } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto, UpdateUserForAdminDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as nodemailer from 'nodemailer';
 import * as bcrypt from 'bcrypt';
 import { totp } from 'otplib';
 import { JwtService } from '@nestjs/jwt';
 import { MailService } from 'src/mail/mail.service';
+import { Request } from 'express';
+import { QueryUserDto } from './dto/user-query.dto';
 
 totp.options = { step: 300 };
 @Injectable()
@@ -224,6 +227,14 @@ export class UserService {
         );
       }
 
+      let checkRegion = await this.prisma.region.findFirst({
+        where: { id: data.regionId },
+      });
+
+      if (!checkRegion) {
+        throw new NotFoundException('Region not found');
+      }
+
       if (data.balance < 0) {
         throw new BadRequestException('Error balance has been deducted.');
       }
@@ -292,20 +303,73 @@ export class UserService {
     });
   }
 
-  async findAll() {
+  async findAll(dto: QueryUserDto) {
     try {
-      let allUsers = await this.prisma.user.findMany({
-        include: {
-          partners: true,
-          Product: true,
-          Salary: true,
-          Payment: true,
-          Contract: true,
-          Buy: true,
+      const {
+        fullName,
+        phone,
+        isActive,
+        regionId,
+        page = 1,
+        limit = 10,
+        sortBy = 'createdAt',
+        order = 'desc',
+      } = dto;
+
+      const skip = (parseInt(String(page)) - 1) * parseInt(String(limit));
+      const take = parseInt(String(limit));
+
+      // isActive ni boolean ga o‘girish
+      let parsedIsActive: boolean | undefined;
+      if (typeof isActive === 'string') {
+        parsedIsActive = isActive === 'true';
+      } else if (typeof isActive === 'boolean') {
+        parsedIsActive = isActive;
+      }
+
+      const where: any = {
+        ...(fullName && {
+          fullName: {
+            contains: fullName,
+            mode: 'insensitive',
+          },
+        }),
+        ...(phone && {
+          phone: {
+            contains: phone,
+            mode: 'insensitive',
+          },
+        }),
+        ...(parsedIsActive !== undefined && {
+          isActive: parsedIsActive,
+        }),
+        ...(regionId && {
+          regionId,
+        }),
+      };
+
+      const total = await this.prisma.user.count({ where });
+
+      const data = await this.prisma.user.findMany({
+        where,
+        orderBy: {
+          [sortBy]: order,
         },
+        skip,
+        take,
       });
 
-      return { data: allUsers };
+      console.log(typeof isActive, isActive);
+
+      const totalPages = Math.ceil(total / take);
+
+      return {
+        data,
+        total,
+        page: Number(page),
+        limit: take,
+        totalPages,
+      };
     } catch (error) {
       this.Error(error);
     }
@@ -325,7 +389,7 @@ export class UserService {
     }
   }
 
-  async update(id: string, data: UpdateUserDto) {
+  async update(id: string, data: UpdateUserForAdminDto) {
     try {
       let checkUser = await this.prisma.user.findFirst({ where: { id } });
 
@@ -333,16 +397,54 @@ export class UserService {
         throw new NotFoundException('User not found');
       }
 
-      if (data.phone) {
-        if (!isValidUzbekPhoneNumber(data.phone)) {
-          throw new BadRequestException(
-            'The phone number was entered incorrectly. example(+998941234567)',
-          );
-        }
+      return {
+        message: 'User changet successfully✅',
+        data: await this.prisma.user.update({
+          where: { id },
+          data: { role: data.role },
+        }),
+      };
+    } catch (error) {
+      this.Error(error);
+    }
+  }
+
+  async updateUser(id, data: UpdateUserDto, req: Request) {
+    try {
+      let checkUser = await this.prisma.user.findFirst({ where: { id } });
+
+      if (!checkUser) {
+        throw new NotFoundException('User not found');
+      }
+
+      if (data.phone && !isValidUzbekPhoneNumber(data.phone)) {
+        throw new BadRequestException(
+          'The phone number was entered incorrectly. example(+998941234567)',
+        );
+      }
+
+      if (req['user'].userId !== id && req['user'].role != 'OWNER') {
+        throw new ForbiddenException('You are not allowed.');
+      }
+
+      let checkRegion = await this.prisma.region.findFirst({
+        where: { id: data.regionId },
+      });
+
+      if (!checkRegion) {
+        throw new NotFoundException('Region not found');
+      }
+
+      let checkUserPhone = await this.prisma.user.findFirst({
+        where: { phone: data.phone },
+      });
+
+      if (checkUserPhone) {
+        throw new BadRequestException('This user alredy exist');
       }
 
       return {
-        message: 'User changet successfully✅',
+        message: 'User changet successfully',
         data: await this.prisma.user.update({ where: { id }, data }),
       };
     } catch (error) {
@@ -350,12 +452,16 @@ export class UserService {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: string, req: Request) {
     try {
       let checkUser = await this.prisma.user.findFirst({ where: { id } });
 
       if (!checkUser) {
         throw new NotFoundException('User not found');
+      }
+
+      if (req['user'].role !== 'OWNER' && id !== req['user'].userId) {
+        throw new ForbiddenException('You are not allowed.');
       }
 
       return {
