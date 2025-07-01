@@ -71,6 +71,7 @@ CREATE TABLE "Salary" (
     CONSTRAINT "Salary_pkey" PRIMARY KEY ("id")
 );
 
+-- 
 -- CreateTable
 CREATE TABLE "Payment" (
     "id" TEXT NOT NULL,
@@ -86,7 +87,7 @@ CREATE TABLE "Payment" (
 
     CONSTRAINT "Payment_pkey" PRIMARY KEY ("id")
 );
-
+-- 
 -- CreateTable
 CREATE TABLE "Product" (
     "id" TEXT NOT NULL,
@@ -133,7 +134,6 @@ CREATE TABLE "Buy" (
 
     CONSTRAINT "Buy_pkey" PRIMARY KEY ("id")
 );
-
 -- CreateTable
 CREATE TABLE "Contract" (
     "id" TEXT NOT NULL,
