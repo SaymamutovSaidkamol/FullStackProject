@@ -1,9 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsArray,
   IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   IsUUID,
   Min,
@@ -32,12 +34,8 @@ export class CreatePartnerDto {
   @IsBoolean()
   isActive: boolean;
 
-  @ApiProperty({
-    example: 12000,
-    required: true,
-  })
   @IsNumber()
-  @Min(0)
+  @IsOptional()
   balance: number;
 
   @ApiProperty({
@@ -59,15 +57,36 @@ export class CreatePartnerDto {
   regionId: string;
 
   @ApiProperty({
+    example: ['+998901112233', '+998909876543'],
+    required: false,
+    description: 'Qo‘shimcha telefon raqamlar',
+    type: [String],
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  additional_phone_numbers?: string[];
+
+  @ApiProperty({
+    example: false,
+    required: false,
+  })
+  @IsBoolean()
+  pin: boolean;
+
+  @ApiProperty({
+    example: false,
+    required: false,
+  })
+  @IsBoolean()
+  archive: boolean;
+
+  @ApiProperty({
     example: 'Toshkent',
     required: true,
   })
   @IsString()
   adress: string;
-
-  @IsUUID()
-  @IsString()
-  userId: string;
 
   @ApiProperty({
     example: 'example.jpg',

@@ -41,14 +41,9 @@ export class CreateUserDto {
   @IsOptional()
   isActive: boolean;
 
-  @ApiProperty({
-    example: 12000,
-    description: 'Foydalanuvchining balanchi',
-    required: true,
-  })
+  @IsOptional()
   @IsNumber()
-  @IsNotEmpty()
-  balance: number;
+  balance: number = 0;
 
   @ApiProperty({
     example: 'uuid()',

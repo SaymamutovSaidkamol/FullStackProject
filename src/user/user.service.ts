@@ -308,7 +308,6 @@ export class UserService {
       const {
         fullName,
         phone,
-        isActive,
         regionId,
         page = 1,
         limit = 10,
@@ -319,13 +318,6 @@ export class UserService {
       const skip = (parseInt(String(page)) - 1) * parseInt(String(limit));
       const take = parseInt(String(limit));
 
-      // isActive ni boolean ga o‘girish
-      let parsedIsActive: boolean | undefined;
-      if (typeof isActive === 'string') {
-        parsedIsActive = isActive === 'true';
-      } else if (typeof isActive === 'boolean') {
-        parsedIsActive = isActive;
-      }
 
       const where: any = {
         ...(fullName && {
@@ -339,9 +331,6 @@ export class UserService {
             contains: phone,
             mode: 'insensitive',
           },
-        }),
-        ...(parsedIsActive !== undefined && {
-          isActive: parsedIsActive,
         }),
         ...(regionId && {
           regionId,
@@ -358,8 +347,6 @@ export class UserService {
         skip,
         take,
       });
-
-      console.log(typeof isActive, isActive);
 
       const totalPages = Math.ceil(total / take);
 
@@ -468,6 +455,31 @@ export class UserService {
         message: 'User deleted successfully✅',
         data: await this.prisma.user.delete({ where: { id } }),
       };
+    } catch (error) {
+      this.Error(error);
+    }
+  }
+
+  async Getme(req: Request) {
+    try {
+      let checkUser = await this.prisma.user.findFirst({
+        where: { id: req['user'].userId },
+        include: {
+          region: true,
+          Salary: true,
+          Contract: true,
+          Product: true,
+          Payment: true,
+          partners: true,
+          Buy: true,
+        },
+      });
+
+      if (!checkUser) {
+        throw new NotFoundException('User not found');
+      }
+
+      return { data: checkUser };
     } catch (error) {
       this.Error(error);
     }

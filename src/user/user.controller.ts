@@ -31,11 +31,22 @@ import { QueryUserDto } from './dto/user-query.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @UseGuards(AuthGuard)
+  @Get('me')
+  @ApiOperation({
+    summary: '👤 Hamma o`zini profilini ko`ra oladi 👤',
+    description:
+      `Berilgan parametrlar bo‘yicha Hamma o'zini profilini ko'ra oladi`,
+  })
+  GetMe(@Req() req: Request) {
+    return this.userService.Getme(req);
+  }
+
   @Roles(RoleUser.OWNER)
   @UseGuards(AuthGuard, RoleGuard)
   @Post('create')
   @ApiOperation({
-    summary: 'Userlarni qo`shish',
+    summary: '📝 Userlarni qo`shish 📝 ',
     description: 'Berilgan parametrlar bo‘yicha userlarni qo`shish',
   })
   create(@Body() createUserDto: CreateUserDto) {
@@ -44,7 +55,7 @@ export class UserController {
 
   @Post('login')
   @ApiOperation({
-    summary: 'Userlarni login qiladi',
+    summary: '🔐 Userlarni login qiladi 🔐',
     description: 'Berilgan parametrlar bo‘yicha userlarni login qlishadi',
   })
   login(@Body() LoginUserDto: LoginUserDto) {
@@ -53,7 +64,7 @@ export class UserController {
 
   @Post('sene-otp')
   @ApiOperation({
-    summary: 'Foydalanuvchilar acountini active qlish uchun code junatadi',
+    summary: '✅ Foydalanuvchilar acountini active qlish uchun code junatadi ✅',
     description:
       'Berilgan parametrlar bo‘yicha Foydalanuvchilar acountini active qlish uchun code junatadi',
   })
@@ -63,7 +74,7 @@ export class UserController {
 
   @Post('verify')
   @ApiOperation({
-    summary: 'Foydalanuvchilar yuborilgan code olib acountini active qlishadi',
+    summary: '✅🔄 Foydalanuvchilar yuborilgan code olib acountini active qlishadi ✅🔄',
     description:
       'Berilgan parametrlar bo‘yicha Foydalanuvchilar yuborilgan code olib acountini active qlishadi',
   })
@@ -74,7 +85,7 @@ export class UserController {
   @Post('reset-password-otp')
   @ApiOperation({
     summary:
-      'Foydalanuvchi Parolni uzgartirmoqchi bulsa agar emailiga code yuborishi kerak',
+      '🔀✅ Foydalanuvchi Parolni uzgartirmoqchi bulsa agar emailiga code yuborishi kerak 🔀✅',
     description:
       'Berilgan parametrlar bo‘yicha Foydalanuvchi Parolni uzgartirmoqchi bulsa agar emailiga code yuborishi kerak',
   })
@@ -85,7 +96,7 @@ export class UserController {
   @Post('reset-password-verify')
   @ApiOperation({
     summary:
-      'Yuborilgan code orqalik yangi paroli b/n code ni kritib update qlishadi',
+      '🔀✅ Yuborilgan code orqalik yangi paroli b/n code ni kritib update qlishadi 🔀✅',
     description:
       'Berilgan parametrlar bo‘yicha Yuborilgan code orqalik yangi paroli b/n code ni kritib update qlishadi',
   })
@@ -95,11 +106,11 @@ export class UserController {
     return this.userService.resetPasswordVerify(VerifyResetPasswordUserDto);
   }
 
-  // @Roles(RoleUser.OWNER, RoleUser.ADMIN)
-  // @UseGuards(AuthGuard, RoleGuard)
+  @Roles(RoleUser.OWNER, RoleUser.ADMIN)
+  @UseGuards(AuthGuard, RoleGuard)
   @Get()
   @ApiOperation({
-    summary: 'Faqat OWNER ko`ra oladi barcha Userlarni',
+    summary: '👥👮🏻‍♂️ Faqat OWNER ko`ra oladi barcha Userlarni 👥👮🏻‍♂️',
     description:
       'Berilgan parametrlar bo‘yicha Faqat OWNER ko`ra oladi barcha Userlarni',
   })
@@ -111,7 +122,7 @@ export class UserController {
   @UseGuards(AuthGuard, RoleGuard)
   @Get(':id')
   @ApiOperation({
-    summary: 'Faqat OWNER Userlarni Id si orqalik ko`ra oladi',
+    summary: '👥👮🏻‍♂️ Faqat OWNER Userlarni Id si orqalik ko`ra oladi 👥👮🏻‍♂️',
     description:
       'Berilgan parametrlar bo‘yicha Faqat OWNER Userlarni Id si orqalik ko`ra oladi',
   })
@@ -121,7 +132,7 @@ export class UserController {
 
   @UseGuards(AuthGuard)
   @ApiOperation({
-    summary: 'Faqat User o`zini Id si orqalik update qila oladi',
+    summary: '👤 Faqat User o`zini Id si orqalik update qila oladi 👤',
     description:
       'Berilgan parametrlar bo‘yicha Faqat User o`zini Id si orqalik update qila oladi',
   })
@@ -129,7 +140,7 @@ export class UserController {
   updateUser(
     @Param('id') id: string,
     @Body() UpdateUserDto: UpdateUserDto,
-    @Req() req: Request
+    @Req() req: Request,
   ) {
     return this.userService.updateUser(id, UpdateUserDto, req);
   }
@@ -137,7 +148,7 @@ export class UserController {
   @Roles(RoleUser.OWNER)
   @UseGuards(AuthGuard, RoleGuard)
   @ApiOperation({
-    summary: 'Faqat OWNER Userlarni Id si orqalik update qila oladi',
+    summary: '👮🏻‍♂️ Faqat OWNER Userlarni Id si orqalik update qila oladi 👮🏻‍♂️',
     description:
       'Berilgan parametrlar bo‘yicha Faqat OWNER Userlarni Id si orqalik update qila oladi',
   })
@@ -152,7 +163,7 @@ export class UserController {
   @UseGuards(AuthGuard)
   @ApiOperation({
     summary:
-      'Faqat OWNER yoki Userni o`zi acoutini Id si orqalik o`chira oladi',
+      '👥👮🏻‍♂️ Faqat OWNER yoki Userni o`zi acoutini Id si orqalik o`chira oladi 👥👮🏻‍♂️',
     description:
       'Berilgan parametrlar bo‘yicha Faqat OWNER Userlarni Id si orqalik o`chira oladi',
   })

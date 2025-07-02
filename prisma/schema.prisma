@@ -28,7 +28,7 @@ model User {
   phone     String
   password  String
   isActive  Boolean  @default(false)
-  balance   Int
+  balance   Int?     @default(0)
   regionId  String
   email     String   @unique
   role      RoleUser @default(ADMIN)
@@ -52,18 +52,21 @@ enum RoleUser {
 }
 
 model Partners {
-  id        String       @id @default(uuid())
-  fullName  String
-  phone     String       @unique
-  isActive  Boolean      @default(true)
-  balance   Int
-  role      RolePartners
-  regionId  String
-  adress    String
-  userId    String
-  image     String
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  id                       String       @id @default(uuid())
+  fullName                 String
+  phone                    String       @unique
+  isActive                 Boolean      @default(true)
+  balance                  Int          @default(0)
+  role                     RolePartners
+  additional_phone_numbers String[]     @default([])
+  pin                      Boolean?     @default(false)
+  archive                  Boolean?     @default(false)
+  regionId                 String
+  adress                   String
+  userId                   String
+  image                    String?
+  createdAt                DateTime     @default(now())
+  updatedAt                DateTime     @updatedAt
 
   user     User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   region   Region     @relation(fields: [regionId], references: [id], onDelete: Cascade, onUpdate: Cascade)

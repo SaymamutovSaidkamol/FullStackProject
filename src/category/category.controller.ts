@@ -26,7 +26,7 @@ export class CategoryController {
   @Roles(RoleUser.OWNER)
   @UseGuards(AuthGuard, RoleGuard)
   @ApiOperation({
-    summary: 'Faqat OWNER category qo`sha oladi',
+    summary: '🗂👮🏻‍♂️➕ Faqat OWNER category qo`sha oladi 🗂👮🏻‍♂️➕',
     description:
       'Berilgan parametrlar bo‘yicha Faqat OWNER category qo`sha oladi',
   })
@@ -37,7 +37,7 @@ export class CategoryController {
 
   @UseGuards(AuthGuard)
   @ApiOperation({
-    summary: 'Categorylarni hamma ko`rishi mumkun, filter, sort va paganation ',
+    summary: '👥 Categorylarni hamma ko`rishi mumkun, filter, sort va paganation 👥',
     description:
       'Berilgan parametrlar bo‘yicha Categorylarni hamma ko`rishi mumkun, filter, sort va paganation ',
   })
@@ -47,7 +47,7 @@ export class CategoryController {
   }
 
   @ApiOperation({
-    summary: 'Categorylarni ID si bo`yicha hamma ko`rolishi mumkun',
+    summary: '👥🗂 Categorylarni ID si bo`yicha hamma ko`rolishi mumkun 🗂👥',
     description:
       'Berilgan parametrlar bo‘yicha Categorylarni ID si bo`yicha hamma ko`rolishi mumkun',
   })
@@ -58,7 +58,7 @@ export class CategoryController {
   }
 
   @ApiOperation({
-    summary: 'Faqat OWNER Categorylarni Update qila oladi',
+    summary: '🗂👮🏻‍♂️ Faqat OWNER Categorylarni Update qila oladi 👮🏻‍♂️🗂',
     description:
       'Berilgan parametrlar bo‘yicha Faqat OWNER Categorylarni Update qila oladi',
   })
@@ -73,7 +73,7 @@ export class CategoryController {
   }
 
   @ApiOperation({
-    summary: 'Faqat OWNER Categorylarni Delete qila oladi',
+    summary: '🗂👮🏻‍♂️❌ Faqat OWNER Categorylarni Delete qila oladi 🗂👮🏻‍♂️❌',
     description:
       'Berilgan parametrlar bo‘yicha Faqat OWNER Categorylarni Delete qila oladi',
   })
