@@ -1,16 +1,18 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsEnum,
   IsOptional,
-  IsBooleanString,
   IsNumberString,
   IsString,
+  IsBoolean,
+  IsNumber,
+  IsIn,
 } from 'class-validator';
 
 export enum CategorySortField {
   TITLE = 'title',
   TIME = 'time',
-//   CREATED_AT = 'createdAt',
 }
 
 export enum SortOrder {
@@ -19,39 +21,36 @@ export enum SortOrder {
 }
 
 export class GetCategoryQueryDto {
-  @ApiPropertyOptional({ example: 'true' })
-  @IsOptional()
-  @IsBooleanString()
-  isActive?: string;
-
   @ApiPropertyOptional({ example: 'Phones' })
   @IsOptional()
   @IsString()
   title?: string;
 
-  @ApiPropertyOptional({ enum: CategorySortField, example: CategorySortField.TITLE })
+  @ApiPropertyOptional({ example: 1 })
   @IsOptional()
-  @IsEnum(CategorySortField)
-  sortField?: CategorySortField;
+  @Type(() => Number)
+  time?: number;
 
-  @ApiPropertyOptional({ enum: SortOrder, example: SortOrder.ASC })
+  @ApiPropertyOptional({ example: 1 })
   @IsOptional()
-  @IsEnum(SortOrder)
-  sortOrder?: SortOrder;
+  @Type(() => Number)
+  page?: number = 1;
 
-  @ApiPropertyOptional({ example: '12' })
+  @ApiPropertyOptional({ example: 10 })
   @IsOptional()
-  @IsNumberString()
-  time?: string;
+  @Type(() => Number)
+  limit?: number = 10;
 
-  @ApiPropertyOptional({ example: '1' })
+  @ApiPropertyOptional({
+    enum: ['title', 'time', 'createdAt'],
+    example: 'createdAt',
+  })
   @IsOptional()
-  @IsNumberString()
-  page?: string;
+  @IsIn(['title', 'time', 'createdAt'])
+  sortBy?: string = 'createdAt';
 
-  @ApiPropertyOptional({ example: '10' })
+  @ApiPropertyOptional({ enum: ['asc', 'desc'], example: 'desc' })
   @IsOptional()
-  @IsNumberString()
-  limit?: string;
+  @IsIn(['asc', 'desc'])
+  order?: 'asc' | 'desc' = 'desc';
 }
-

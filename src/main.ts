@@ -22,7 +22,14 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, documentFactory);
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe(),
+    new ValidationPipe({
+      transform: true, // 🟢 BU SHART
+      whitelist: true,
+      forbidNonWhitelisted: false,
+    }),
+  );
   app.enableCors();
 
   await app.listen(process.env.PORT ?? 3000);

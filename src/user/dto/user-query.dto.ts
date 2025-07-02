@@ -13,12 +13,6 @@ export class QueryUserDto {
   @IsString()
   phone?: string;
 
-  @ApiPropertyOptional({ example: true })
-  @IsOptional()
-  @Type(() => Boolean)
-  @IsBoolean()
-  isActive?: boolean;
-
   @ApiPropertyOptional({ example: 'uuid()' })
   @IsOptional()
   @IsString()

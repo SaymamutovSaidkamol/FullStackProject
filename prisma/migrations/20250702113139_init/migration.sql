@@ -30,7 +30,7 @@ CREATE TABLE "User" (
     "phone" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "isActive" BOOLEAN NOT NULL DEFAULT false,
-    "balance" INTEGER NOT NULL,
+    "balance" INTEGER DEFAULT 0,
     "regionId" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "role" "RoleUser" NOT NULL DEFAULT 'ADMIN',
@@ -47,12 +47,15 @@ CREATE TABLE "Partners" (
     "fullName" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
-    "balance" INTEGER NOT NULL,
+    "balance" INTEGER NOT NULL DEFAULT 0,
     "role" "RolePartners" NOT NULL,
+    "additional_phone_numbers" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "pin" BOOLEAN DEFAULT false,
+    "archive" BOOLEAN DEFAULT false,
     "regionId" TEXT NOT NULL,
     "adress" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "image" TEXT NOT NULL,
+    "image" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -71,7 +74,6 @@ CREATE TABLE "Salary" (
     CONSTRAINT "Salary_pkey" PRIMARY KEY ("id")
 );
 
--- 
 -- CreateTable
 CREATE TABLE "Payment" (
     "id" TEXT NOT NULL,
@@ -87,7 +89,7 @@ CREATE TABLE "Payment" (
 
     CONSTRAINT "Payment_pkey" PRIMARY KEY ("id")
 );
--- 
+
 -- CreateTable
 CREATE TABLE "Product" (
     "id" TEXT NOT NULL,
@@ -134,6 +136,7 @@ CREATE TABLE "Buy" (
 
     CONSTRAINT "Buy_pkey" PRIMARY KEY ("id")
 );
+
 -- CreateTable
 CREATE TABLE "Contract" (
     "id" TEXT NOT NULL,

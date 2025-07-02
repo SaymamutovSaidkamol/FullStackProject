@@ -1,5 +1,7 @@
 import {
   BadGatewayException,
+  BadRequestException,
+  HttpException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -11,6 +13,12 @@ import { GetCategoryQueryDto } from './dto/GetCategoryQuery.dto';
 @Injectable()
 export class CategoryService {
   constructor(private prisma: PrismaService) {}
+  private Error(error: any): never {
+    if (error instanceof HttpException) {
+      throw error;
+    }
+    throw new BadRequestException(error.message);
+  }
   async create(data: CreateCategoryDto) {
     let checkCateg = await this.prisma.category.findFirst({
       where: { title: data.title },
@@ -26,56 +34,47 @@ export class CategoryService {
   }
 
   async findAll(query: GetCategoryQueryDto) {
-    const {
-      isActive,
-      title,
-      time,
-      sortField,
-      sortOrder,
-      page = '1',
-      limit = '10',
-    } = query;
+    try {
+      const {
+        title,
+        time,
+        page = 1,
+        limit = 10,
+        sortBy = 'createdAt',
+        order = 'desc',
+      } = query;
 
-    const sortFieldStr = String(sortField);
-    const sortOrderStr = String(sortOrder);
+      const skip = (parseInt(String(page)) - 1) * parseInt(String(limit));
+      const take = parseInt(String(limit));
 
-    const validSortFields = ['title', 'time', 'isActive'];
-    const validSortOrders = ['asc', 'desc'];
+      const where: any = {
+        ...(title && {
+          title: { contains: title, mode: 'insensitive' },
+        }),
+        ...(time !== undefined && { time: Number(time) }),
+      };
 
-    const finalSortField = validSortFields.includes(sortFieldStr)
-      ? sortFieldStr
-      : 'title';
+      const total = await this.prisma.category.count({ where });
 
-    const finalSortOrder = validSortOrders.includes(sortOrderStr)
-      ? sortOrderStr
-      : 'asc';
+      const data = await this.prisma.category.findMany({
+        where,
+        skip,
+        take,
+        orderBy: [{ [sortBy]: order }],
+      });
 
-    const where: any = {};
-    if (isActive !== undefined) where.isActive = isActive === 'true';
-    if (title) where.title = { contains: title, mode: 'insensitive' };
-    if (time) where.time = +time;
+      const totalPages = Math.ceil(total / take);
 
-    const skip = (parseInt(page) - 1) * parseInt(limit);
-    const take = parseInt(limit);
-
-    const data = await this.prisma.category.findMany({
-      where,
-      skip,
-      take,
-      orderBy: {
-        [finalSortField as string]: finalSortOrder,
-      },
-    });
-
-    const total = await this.prisma.category.count({ where });
-
-    return {
-      data,
-      total,
-      page: parseInt(page),
-      limit: parseInt(limit),
-      totalPages: Math.ceil(total / parseInt(limit)),
-    };
+      return {
+        data,
+        total,
+        page,
+        limit: take,
+        totalPages,
+      };
+    } catch (error) {
+      this.Error(error);
+    }
   }
 
   async findOne(id: string) {
