@@ -42,8 +42,8 @@ export class UserController {
     return this.userService.Getme(req);
   }
 
-  @Roles(RoleUser.OWNER)
-  @UseGuards(AuthGuard, RoleGuard)
+  // @Roles(RoleUser.OWNER)
+  // @UseGuards(AuthGuard, RoleGuard)
   @Post('create')
   @ApiOperation({
     summary: '📝 Userlarni qo`shish 📝 ',
