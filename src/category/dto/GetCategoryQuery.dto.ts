@@ -21,7 +21,7 @@ export enum SortOrder {
 }
 
 export class GetCategoryQueryDto {
-  @ApiPropertyOptional({ example: 'Phones' })
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   title?: string;

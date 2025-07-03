@@ -11,37 +11,37 @@ import { Type } from 'class-transformer';
 import { RolePartners } from 'src/enums/enums';
 
 export class QueryPartnerDto {
-  @ApiPropertyOptional({ example: 'Saidkamol' })
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   fullName?: string;
 
-  @ApiPropertyOptional({ example: '+998901234567' })
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   phone?: string;
 
-  @ApiPropertyOptional({ example: 50000 })
+  @ApiPropertyOptional()
   @IsOptional()
   @Type(() => Number)
   balance?: number;
 
-  @ApiPropertyOptional({ enum: RolePartners, example: RolePartners.CURTOMER })
+  @ApiPropertyOptional({ enum: RolePartners })
   @IsOptional()
   @IsEnum(RolePartners)
   role?: RolePartners;
 
-  @ApiPropertyOptional({ example: 'uuid()' })
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   regionId?: string;
 
-  @ApiPropertyOptional({ example: 'Toshkent' })
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   adress?: string;
 
-  @ApiPropertyOptional({ example: 'uuid()' })
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   userId?: string;

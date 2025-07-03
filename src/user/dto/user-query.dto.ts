@@ -3,17 +3,17 @@ import { IsBoolean, IsEnum, IsIn, IsOptional, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class QueryUserDto {
-  @ApiPropertyOptional({ example: 'Saidkamol' })
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   fullName?: string;
 
-  @ApiPropertyOptional({ example: '+998941234567' })
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   phone?: string;
 
-  @ApiPropertyOptional({ example: 'uuid()' })
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   regionId?: string;

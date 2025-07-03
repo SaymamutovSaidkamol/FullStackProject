@@ -34,12 +34,16 @@ export class CreatePartnerDto {
   @IsBoolean()
   isActive: boolean;
 
+  @ApiProperty({
+    example: 0,
+    required: true,
+  })
   @IsNumber()
   @IsOptional()
   balance: number;
 
   @ApiProperty({
-    example: RolePartners.CURTOMER,
+    example: RolePartners.CUSTOMER,
     required: true,
     enum: RolePartners,
   })

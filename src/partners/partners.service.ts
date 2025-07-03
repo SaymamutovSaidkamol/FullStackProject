@@ -88,8 +88,6 @@ export class PartnersService {
         order = 'desc',
       } = query;
 
-      console.log(query);
-
       const skip = (parseInt(String(page)) - 1) * parseInt(String(limit));
       const take = parseInt(String(limit));
 
@@ -140,9 +138,9 @@ export class PartnersService {
   }
 
   async update(id: string, data: UpdatePartnerDto) {
-    let checkCateg = await this.prisma.partners.findFirst({ where: { id } });
+    let checkParter = await this.prisma.partners.findFirst({ where: { id } });
 
-    if (!checkCateg) {
+    if (!checkParter) {
       throw new NotFoundException('Partners not found');
     }
 
@@ -153,10 +151,10 @@ export class PartnersService {
         );
       }
 
-      let checkCategory = await this.prisma.partners.findFirst({
+      let searchPartner = await this.prisma.partners.findFirst({
         where: { phone: data.phone },
       });
-      if (checkCategory) {
+      if (searchPartner) {
         throw new BadRequestException('Partners alredy exist');
       }
     }
@@ -173,6 +171,10 @@ export class PartnersService {
 
     if (data.isActive === false) {
       data.pin = false;
+    }
+
+    if (data.balance) {
+      throw new BadRequestException("The balance cannot be changed.")
     }
 
     if (data.balance! > 0 || data.balance! < 0) {

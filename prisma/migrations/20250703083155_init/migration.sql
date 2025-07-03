@@ -2,7 +2,7 @@
 CREATE TYPE "RoleUser" AS ENUM ('ADMIN', 'OWNER');
 
 -- CreateEnum
-CREATE TYPE "RolePartners" AS ENUM ('SELLER', 'CURTOMER');
+CREATE TYPE "RolePartners" AS ENUM ('SELLER', 'CUSTOMER');
 
 -- CreateEnum
 CREATE TYPE "PaymentType" AS ENUM ('CASH', 'CARD');
@@ -78,10 +78,10 @@ CREATE TABLE "Salary" (
 CREATE TABLE "Payment" (
     "id" TEXT NOT NULL,
     "partnerId" TEXT NOT NULL,
-    "debtId" TEXT NOT NULL,
+    "debtId" TEXT,
     "userId" TEXT NOT NULL,
     "amount" INTEGER NOT NULL,
-    "comment" TEXT NOT NULL,
+    "comment" TEXT,
     "paymentType" "PaymentType" NOT NULL DEFAULT 'CASH',
     "type" "type" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
