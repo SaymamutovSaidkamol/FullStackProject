@@ -8,6 +8,7 @@ import {
 import { CreateSalaryDto } from './dto/create-salary.dto';
 import { UpdateSalaryDto } from './dto/update-salary.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Request } from 'express';
 
 @Injectable()
 export class SalaryService {
@@ -20,8 +21,14 @@ export class SalaryService {
     throw new BadRequestException(error.message);
   }
 
-  async create(data: CreateSalaryDto) {
+  async create(data: CreateSalaryDto, req: Request) {
     try {
+      const userId = req['user']?.id;
+
+      if (!userId) {
+        throw new BadRequestException('User ID not found');
+      }
+
       let checkUserId = await this.prisma.user.findFirst({
         where: { id: data.userId },
       });
@@ -30,7 +37,13 @@ export class SalaryService {
         throw new NotFoundException('User not found');
       }
 
-      let newCateg = await this.prisma.salary.create({ data });
+      let newCateg = await this.prisma.salary.create({
+        data: {
+          amount: data.amount,
+          comment: data.comment,
+          userId,
+        },
+      });
 
       return { data: newCateg };
     } catch (error) {
@@ -62,8 +75,10 @@ export class SalaryService {
     }
   }
 
-  async update(id: string, data: UpdateSalaryDto) {
+  async update(id: string, data: UpdateSalaryDto, req: Request) {
     try {
+      data.userId = req['user'].userId;
+
       let checkCateg = await this.prisma.salary.findFirst({ where: { id } });
 
       if (!checkCateg) {

@@ -30,7 +30,7 @@ export class RegionController {
     return this.regionService.create(createRegionDto);
   }
 
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   @ApiResponse({ status: 200, description: 'Muvaffaqiyatli bajarildi' })
   @ApiResponse({ status: 400, description: 'Noto‘g‘ri so‘rov' })
   @Get()

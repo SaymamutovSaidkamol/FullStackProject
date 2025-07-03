@@ -98,8 +98,6 @@ export class UserService {
         where: { email: data.email },
       });
 
-      console.log(checkUser);
-
       if (!checkUser) {
         throw new NotFoundException('User not found');
       }
@@ -128,8 +126,6 @@ export class UserService {
       let checkUser = await this.prisma.user.findFirst({
         where: { email: data.email },
       });
-
-      console.log(checkUser);
 
       if (!checkUser) {
         throw new NotFoundException('User not found');

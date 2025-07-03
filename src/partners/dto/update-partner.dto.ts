@@ -35,16 +35,12 @@ export class UpdatePartnerDto {
   @IsBoolean()
   isActive?: boolean;
 
-  @ApiProperty({
-    example: 12000,
-    required: false,
-  })
   @IsOptional()
   @IsNumber()
   balance?: number;
 
   @ApiProperty({
-    example: RolePartners.CURTOMER,
+    example: RolePartners.CUSTOMER,
     required: false,
     enum: RolePartners,
   })

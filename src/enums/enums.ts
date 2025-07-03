@@ -4,7 +4,7 @@ export enum RoleUser {
 }
 export enum RolePartners {
   SELLER = 'SELLER',
-  CURTOMER = 'CURTOMER',
+  CUSTOMER = 'CUSTOMER',
 }
 export enum unitsType {
   KG = 'KG',
